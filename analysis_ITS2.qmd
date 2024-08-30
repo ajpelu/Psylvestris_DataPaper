@@ -1,14 +1,16 @@
 ---
 title: "Script for the analysis of already processed ITS2 (fungal) reads obtained by Illumina (MiSeq)"
 author: Ana V Lasa <a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>
-format: html
+format: 
+  html:
+    toc: true
 execute:
   eval: false
 editor_options: 
   chunk_output_type: console
 ---
 
-### Load packages 
+## Load packages 
 
 ```{r}
 #| eval: false
@@ -21,9 +23,6 @@ install.packages("ggplot2")
 install.packages("vegan")
 install.packages("purrr")
 ```
-
-
-### Script 
 
 ```{r}
 #load the libraries
@@ -69,8 +68,7 @@ row.names(ASV) <- data$ASV_names
 identical(rownames(ASV), rownames(tax)) # it should be TRUE
 ```
 
-
-#### CREATE A PHYLOSEW OBJECT
+## Create a Phyloseq object
 ```{r}
 phy_OTUtable <- otu_table(ASV, taxa_are_rows = TRUE)
 phy_taxonomy <- tax_table(as.matrix(tax))
@@ -85,10 +83,7 @@ sum(sample_names(phy_metadata) %in% sample_names(phy_OTUtable))
 nsamples(phy_metadata)
 ```
 
-
-
-
-#### FIRST TRIMMING OF THE DATASET 
+## First trimming of the dataset
 - Our dataset included samples obtained in spring and summer, samples coming from *P. sylvestris*, *P. pinaster* and *P. sylvestris* subsp. *nevadensis*. 
 - Here we only wanted the samples corresponding to *P. sylvestris* sampled in spring
 
@@ -110,8 +105,7 @@ write.table(data.frame(" " = rownames(numsec), numsec), file = "NumberofWorkingS
 ```
 
 
-
-#### SUBSET SAMPLES
+## Subset samples
 - We want to separate the data by mountainous area under study and by plant compartment
 ```{r}
 Almijara <- subset_samples(phy_data2, Site == "Almijara")
@@ -148,10 +142,8 @@ endo <- subset_samples(phy_data2, Compartment == "Endosphere")
 endo <- prune_taxa(taxa_sums(endo) > 0.0, endo)
 ```
 
-
-
-#### RAREFACTION CURVES
-##### Almijara (Rhizosphere)
+## Rarefaction curves
+### Almijara (Rhizosphere)
 ```{r}
 # 1.Almijara Rhizosphere..........................................
 mt <- as.data.frame(sample_data(Almijara_rizo))[order(as.character(rownames(as.data.frame(sample_data(Almijara_rizo)))), decreasing = FALSE), ] # save the metadata of this sub-dataset
@@ -183,7 +175,6 @@ rare$raw.read <- as.numeric(rare$raw.read)
 # Esto que acabamos de hacer solo vale para las muestras en concreto que tengo ahora
 ```
 
-Generate a plot 
 ```{r}
 p <- ggplot(rare, aes(x = raw.read, y = ASV, colour = Condition, group = Sample)) + # coloring by condition of the trees
   theme_bw() +
@@ -218,7 +209,7 @@ ggsave(filename = "Rarefacc_rizo_Almijara_SciData_Fungi.tiff", plot = p, device 
 rare <- NULL
 ```
 
-##### Almijara (Endosphere)
+### Almijara (Endosphere)
 
 ```{r}
 mt <- as.data.frame(sample_data(Almijara_endo))[order(as.character(rownames(as.data.frame(sample_data(Almijara_endo)))), decreasing = FALSE), ]
@@ -250,7 +241,6 @@ rare$raw.read <- as.numeric(rare$raw.read)
 ```
 
 
-Generate a plot 
 ```{r}
 p <- ggplot(rare, aes(x = raw.read, y = ASV, colour = Condition, group = Sample)) +
   theme_bw() +
@@ -284,7 +274,7 @@ ggsave(filename = "Rarefacc_Almijara_endo_SciData_fungi.tiff", plot = p, device 
 rare <- NULL
 ```
 
-##### Baza (Rhizosphere)
+### Baza (Rhizosphere)
 ```{r}
 mt <- as.data.frame(sample_data(Baza_rizo))[order(as.character(rownames(as.data.frame(sample_data(Baza_rizo)))), decreasing = FALSE), ]
 otu <- otu_table(Baza_rizo)
@@ -314,7 +304,6 @@ rare$Condition <- gsub(".*/", "", rare$Condition)
 rare$raw.read <- as.numeric(rare$raw.read)
 ```
 
-Generate a plot 
 ```{r}
 p <- ggplot(rare, aes(x = raw.read, y = ASV, colour = Condition, group = Sample)) +
   theme_bw() +
@@ -348,7 +337,7 @@ ggsave(filename = "Rarefacc_Baza_Rizo_SciData_fungi.tiff", plot = p,device = tif
 rare=NULL
 ```
 
-##### Baza (Endosphere)
+### Baza (Endosphere)
 ```{r}
 mt <- as.data.frame(sample_data(Baza_endo))[order(as.character(rownames(as.data.frame(sample_data(Baza_endo)))), decreasing = FALSE), ]
 otu <- otu_table(Baza_endo)
@@ -378,7 +367,6 @@ rare$Condition <- gsub(".*/", "", rare$Condition)
 rare$raw.read <- as.numeric(rare$raw.read)
 ```
 
-Generate a plot 
 ```{r}
 p <- ggplot(rare, aes(x = raw.read, y = ASV, colour = Condition, group = Sample)) +
   theme_bw() +
@@ -412,7 +400,7 @@ rare <- NULL
 ```
 
 
-##### Sierra Nevada (Rhizosphere)
+### Sierra Nevada (Rhizosphere)
 
 ```{r}
 mt <- as.data.frame(sample_data(Nevada_rizo))[order(as.character(rownames(as.data.frame(sample_data(Nevada_rizo)))), decreasing = F), ]
@@ -443,7 +431,6 @@ rare$Condition <- gsub(".*/", "", rare$Condition)
 rare$raw.read <- as.numeric(rare$raw.read)
 ```
 
-Generate a plot 
 ```{r}
 p <- ggplot(rare, aes(x = raw.read, y = ASV, colour = Condition, group = Sample)) +
   theme_bw() +
@@ -476,7 +463,7 @@ rare <- NULL
 ```
 
 
-##### Sierra Nevada (Endosphere)
+### Sierra Nevada (Endosphere)
 ```{r}
 mt <- as.data.frame(sample_data(Nevada_endo))[order(as.character(rownames(as.data.frame(sample_data(Nevada_endo)))), decreasing = F), ]
 otu <- otu_table(Nevada_endo)
