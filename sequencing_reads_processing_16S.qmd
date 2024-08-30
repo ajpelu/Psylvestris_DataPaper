@@ -1,0 +1,563 @@
+---
+title: "Sequencing Reads Processing 16S"
+author: Ana V Lasa <a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>
+format: 
+  html:
+    toc: true
+execute:
+  eval: false
+editor_options: 
+  chunk_output_type: console
+---
+
+# Aim {.unnumbered}
+
+Processing of Illumina (MiSeq reads). 16S (bacteria) reads
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("dada2")
+
+# phyloseq
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("phyloseq")
+
+# Biocgenerics
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("BiocGenerics")
+
+# Biostrings
+if (!require("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("Biostrings")
+
+# ShortRead
+if (!require("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+BiocManager::install("ShortRead")
+
+# ggplot2 (for plotting)
+install.packages("ggplot2")
+
+# tidyverse
+install.packages("tidyverse")
+
+
+# Load corresponding libraries
+library(dada2)
+library(phyloseq)
+library(BiocGenerics)
+library(Biostrings)
+library(ShortRead)
+library(devtools)
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+path <- "C:/Users/radik/Desktop/Psylvestris_DataPper" #set the path where the fastq.gz files are
+list.files(path)#check that all the needed files are in the path
+
+#NOTE: if our scientific project includes different sequencing runs (for instance, if you have a lot of samples that do not fit well into just one run), 
+#we should repeat steps 1) to 6) for each sequencing run, and then (step 7), merge all the sequence tables obtained in the step 6)
+```
+
+If our scientific project includes different sequencing runs (for instance, if you have a lot of samples that do not fit well into just one run), we should repeat steps 1) to 6) for each sequencing run, and then (step 7), merge all the sequence tables obtained in the step 6). 
+
+
+# Step 1: Adaption of the file names
+- Sort Forward (F) and Reverse (R) files separatedly
+- F and R fastq filenames should have the following format: SAMPLENAME_R1_001.fastq.gz;SAMPLENAME_R2_001.fastq.gz
+- In this example, the names of F and R file are the following: NGS006-22-EXP4-ITS2-SAMPLENAME_yyy-R1_001.fastq.gz
+
+```{r}
+fnFs <- sort(list.files(path, pattern = "_R1_001.fastq.gz", full.names = TRUE))
+fnRs <- sort(list.files(path, pattern = "_R2_001.fastq.gz", full.names = TRUE))
+
+# Extract sample names, assuming filenames have format: xxx-SAMPLENAME_yyy_R1_001.fastq.gz
+sample.names_raw <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
+# this function splits the string when it finds the first "_" symbol, and keeps the first ("1") part of the string
+# output in this example: NGS006-22-EXP5-16S-SAMPLENAME
+
+sample.names <- gsub("NGS006-22-EXP5-16S-", "", sample.names_raw) # replace the xxx part of the string, by nothing (or by the characters that allow you to get the sample names
+# output in this example: SAMPLENAME
+```
+
+# Step 2: Check the quality of the reads
+
+```{r}
+# a) Check the number of reads
+raw_reads_count <- NULL
+
+for (i in 1:length(fnFs)) {
+  raw_reads_count <- rbind(raw_reads_count, length(ShortRead::readFastq(fnFs[i])))
+} # it counts the number of reads in fnFs
+
+rownames(raw_reads_count) <- sample.names
+a <- data.frame("_" = rownames(raw_reads_count), raw_reads_count)
+colnames(a) <- c("Sample", "Number_of_reads")
+
+# Check which samples have the highlest and lowest amount of reads
+cbind(row.names(raw_reads_count)[which.min(raw_reads_count)], min(raw_reads_count))
+cbind(row.names(raw_reads_count)[which.max(raw_reads_count)], max(raw_reads_count))
+
+write.table(data.frame("_" = rownames(raw_reads_count), raw_reads_count), file = "NumberRawReads.txt", sep = "\t", row.names = F)
+
+# b) Check the length of the reads
+reads <- ShortRead::readFastq(fnFs) # it saves the reads into a new variable
+
+uniques <- unique(reads@quality@quality@ranges@width) # to get the length of the reads (bp)
+
+counts <- NULL # it counts the number of reads of each length
+for (i in 1:length(uniques)) {
+  counts <- rbind(counts, length(which(reads@quality@quality@ranges@width == uniques[i])))
+}
+
+histogram <- cbind(uniques, counts)
+colnames(histogram) <- c("Seq.length", "counts")
+
+# check the histogram
+head(histogram[order(histogram[, 1], decreasing = TRUE), ]) # Most sequences should fall in the expected sequence length
+# since we followed a 2x275 PE strategy, most of our reads are of 275-276bp
+write.table(histogram, file = "Length_Raw_Reads.txt", sep = "\t", row.names = F)
+
+# plot the histogram
+hist(reads@quality@quality@ranges@width, main = "Forward length distribution", xlab = "Sequence length", ylab = "Raw reads")
+
+# c) Check the quality plots
+plotQualityProfile(fnFs[4:5]) # here you can plot whichever of the samples you want (in this example, samples number 4 and 5)
+plotQualityProfile(fnRs[4:5])
+
+```
+
+# Step 3. FIGARO
+
+```{r}
+# Preparation of the data
+# Creamos una carpeta donde guarde todas las secuencias tras el corte por figaro
+figFs <- file.path(path, "figaro", basename(fnFs))
+figRs <- file.path(path, "figaro", basename(fnRs))
+
+# Figaro requires all the reads are of the same length, so firstly we have to cut the sequences trying to
+# include all the sequences, so we make an initial cut at 274 bp (we won't lose many reads)
+
+out.figaro <- filterAndTrim(fnFs, figFs, fnRs, figRs, compress = TRUE, multithread = TRUE, truncLen = c(274, 274))
+# filterAndTrim(input F, output F, input R, output R)
+# IMPORTANT: figaro will consider these reads just for calculation of the best parameters for DADA2
+# but these sequences will not be used for DADA2, we then will use all the reads for DADA2
+
+FWD <- c("CCTACGGGNBGCASCAG") # insert here the sequence of the the primer F
+REV <- c("GACTACNVGGGTATCTAATCC") # here the sequence of the primer R
+nchar(FWD) # to determine the number of bp of the primers F and R
+nchar(REV)
+
+# Run figaro definitely:
+figaro <- system(("python3 /home/programs/figaro/figaro/figaro.py -i C:/Users/radik/Desktop/Psylvestris_DataPper/figaro -o C:/Users/radik/Desktop/Psylvestris_DataPper/figaro -a 426 -f 17 -r 21"),
+  intern = TRUE
+)
+#-i insert the path of the previously created figaro folder
+#-o the path of the figaro folder
+#-a amplicon size (bp) according to the 16S rRNA hypervariable regions under study
+#-f size of the F primer (bp)
+#-r size of the R primer (bp)
+# figaro script (figaro.py) runs properly in python3
+
+head(figaro) # check the results of figaro and select that maxExpectedError with which you obtain a good score and a good percentage of retained reads
+# write down the maxEE and the trimming positions, in this example: trimming positions [F,R]: [269,215]; maxEE[F,R]: [2,2]
+```
+
+## Step 4. Filter and trimming steps 
+
+```{r}
+# Create the folder "filtered" to save the trimmed reads
+filtFs <- file.path(path, "filtered", basename(fnFs))
+filtRs <- file.path(path, "filtered", basename(fnRs))
+
+# trimming step itself:
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs,
+  truncLen = c(269, 215),
+  maxN = 0, maxEE = c(2, 2), truncQ = 2, rm.phix = TRUE,
+  compress = TRUE, multithread = TRUE, minLen = 50
+)
+# input reads F, output reads F, input reads R, output reads R,
+# truncLen: trimming positions in F and R reads, according to Figaro results
+# maxN: number of allowed ambiguities (N) in the reads
+# maxEE: maximum expected errors in F and R reads, according to Figaro results
+# trunqQ: the minimum quality score of each nucleotides; remove reads with at least one nucleotide with an associated quality score under the selected value
+# minLen: the minimum size of the reads; remove all the reads under this size (bp)
+
+head(out)
+```
+
+# Step 5: CUTADAPT. primer removal from F and R reads
+
+```{r}
+# Create a function to calculate all the orientations of F and R primers
+allOrients <- function(primer) {
+  require(Biostrings)
+  dna <- DNAString(primer) # BioStrings package works with strings but not with characters
+  orients <- c(
+    Forward = dna, Complement = Biostrings::complement(dna), Reverse = reverse(dna),
+    RevComp = reverseComplement(dna)
+  )
+  return(sapply(orients, toString)) # change to string
+}
+FWD.orients <- allOrients(FWD) # pass the function to primer F
+REV.orients <- allOrients(REV) # pass the function to primer R
+FWD.orients # check the calculated orientations
+REV.orients
+
+# Count the number of times both primers (in all the possible orientations) appear in our dataset
+
+primerHits <- function(primer, fn) {
+  nhits <- vcountPattern(primer, sread(readFastq(fn)), fixed = FALSE)
+  return(sum(nhits > 0))
+}
+
+# check the number of reads in which the primers F and R (in all possible orientations) are found in sample number "1"
+rbind(
+  FWD.ForwardReads = sapply(FWD.orients, primerHits, fn = filtFs[[1]]),
+  FWD.ReverseReads = sapply(FWD.orients, primerHits, fn = filtRs[[1]]),
+  REV.ForwardReads = sapply(REV.orients, primerHits, fn = filtFs[[1]]),
+  REV.ReverseReads = sapply(REV.orients, primerHits, fn = filtRs[[1]])
+)
+
+# On the left, we have the presence of forward and reverse primers (FWD and REV) in forward and reverse reads (FWD.ForwardReads, FWD.ReverseReads, REV.ForwardReads and REV.ReverseReads). On the top of the table, we see the four possible orientations of the primers (Forward, Complement, Reverse and RevComp).
+
+cutadapt <- "/usr/local/bin/cutadapt" # path to cutadapt in your computer/machine
+
+system2(cutadapt, args = c("--version")) # Run shell commands from R
+
+# Create a directoy or folder where your reads will be saved
+path.cut <- file.path(path, "cutadapt")
+
+if (!dir.exists(path.cut)) dir.create(path.cut)
+
+fnFs.cut <- file.path(path.cut, basename(fnFs))
+fnRs.cut <- file.path(path.cut, basename(fnRs))
+
+# Produce arguments for cutadapt (visit the cutadapt website for more information)
+FWD.RC <- dada2:::rc(FWD) # calculate the reverse complementary sequence
+REV.RC <- dada2:::rc(REV)
+
+# add the specific adapters to F and R reads, which are need for cutadapt
+R1.flags <- paste0("-a", " ", "^", FWD, "...", REV.RC)
+R2.flags <- paste0("-A", " ", "^", REV, "...", FWD.RC)
+
+# Run cutadapt itself
+
+for (i in seq_along(fnFs)) {
+  system2(cutadapt, args = c(
+    R1.flags, R2.flags, "-n", 2, "-m", 1,
+    "--discard-untrimmed",
+    "-j", 0,
+    "-o", fnFs.cut[i], "-p", fnRs.cut[i], # output files
+    filtFs[i], filtRs[i], # input files
+    "--report=minimal"
+  )) # Report minimal reports a summary
+}
+
+#  -n 2: remove the primers
+#   -m 1: remove empty reads
+
+# cutadapt will remove the primers and also the sequences in which none of the primers are found
+
+# after running cutadapt, check the number of primers found now in the output reads, in sample number "1"
+rbind(
+  FWD.ForwardReads = sapply(FWD.orients, primerHits, fn = fnFs.cut[[1]]),
+  FWD.ReverseReads = sapply(FWD.orients, primerHits, fn = fnRs.cut[[1]]),
+  REV.ForwardReads = sapply(REV.orients, primerHits, fn = fnFs.cut[[1]]),
+  REV.ReverseReads = sapply(REV.orients, primerHits, fn = fnRs.cut[[1]])
+)
+
+# be CAREFUL! it could be possible to find still some primers in your dataset. Do not worry if there are no many. Cutadapt and primerHits function
+# do not work in the same way, so some primers can be found.
+```
+
+
+# Step 6: DADA2
+
+```{r}
+# (visit DADA2 website for more information about the specific steps)
+# Learn error rates................
+errF <- learnErrors(fnFs.cut, multithread = T, verbose = 1)
+errR <- learnErrors(fnRs.cut, multithread = T, verbose = 1)
+
+# View Error plots................
+plotErrors(errF, nominalQ = TRUE)
+plotErrors(errR, nominalQ = TRUE)
+
+# Sample inference.................
+# it calculates the inferred composition of the samples. Removes all the possible sequence errors
+# and keeps just the real sequences.
+
+dadaFs <- dada(fnFs.cut, err = errF, multithread = TRUE)
+dadaRs <- dada(fnRs.cut, err = errR, multithread = TRUE)
+dadaFs[[5]] # check the inferred sample number 5. We can see the number of ASVs and unique sequences
+dadaRs[[5]]
+
+names(dadaFs) <- sample.names # giving the correct name of the samples
+names(dadaRs) <- sample.names
+
+# Merging F and R reads.............................
+mergers <- mergePairs(dadaFs, fnFs.cut, dadaRs, fnRs.cut, verbose = TRUE)
+head(mergers[[5]]) # check the results for sample number 5
+
+# Calculate the sequence tables......................
+seqtab_primavera_rizo <- makeSequenceTable(mergers)
+dim(seqtab_primavera_rizo) # it shows the number of samples (including MOCK samples, negative control and so on) and the number of ASVs
+
+saveRDS(seqtab_primavera_rizo, "C:/Users/radik/Desktop/Psylvestris_DataPper/seqtab_primavera_rizo_16S.rds")
+# save the corresponding RDS file
+
+# IMPORTANT: if we have different sequencing runs included in the same scientific project, we should merge then
+# at this point. For that purpose, we should merge the sequence tables coming from each sequencing runs
+
+```
+
+# Step 7: Merge SeqTabs obtained from different sequencing runs
+
+```{r}
+# (skip this step if you included all the samples in one sequencing run. In that case, go to step7)
+
+seqtab_pri_endo <- readRDS("seqtab_primavera_endo_16s.rds") # load each sequence table
+seqtab_pri_rizo <- readRDS("seqtab_primavera_rizo_16S.rds")
+seqtab_ve_endo <- readRDS("seqtab_verano_endo_16s.rds")
+seqtab_ve_endo_rizo <- readRDS("seqtab_verano_endo_rizo_16s.rds")
+seqtab_ve_rizo <- readRDS("seqtab_verano_rizo_16S.rds")
+
+# merge all the seqTabs
+mergedSeqTab <- mergeSequenceTables(seqtab_pri_endo, seqtab_pri_rizo,
+  seqtab_ve_endo, seqtab_ve_endo_rizo, seqtab_ve_rizo,
+  repeats = "sum"
+)
+```
+
+# Step 8: Chimera removal 
+
+```{r}
+seqtab.nochim <- removeBimeraDenovo(mergedSeqTab, method = "consensus", multithread = TRUE, verbose = TRUE)
+# in case you have just one seqtab, replace "mergedSeqTab" by "seqtab_primavera_rizo"
+dim(seqtab.nochim) # indicates the number of samples and ASVs, but not the number of sequences
+
+# Check the number of ASVs, length
+table(nchar(getSequences(seqtab.nochim))) # Number of ASV of each length
+# first line: length (bp)
+# second line: number of ASVs of that length
+
+# Calculate the number of sequences of each ASV
+reads.per.seqlen <- tapply(colSums(seqtab.nochim), factor(nchar(getSequences(seqtab.nochim))), sum)
+reads.per.seqlen
+
+table_reads_seqlen <- data.frame(length = as.numeric(names(reads.per.seqlen)), count = reads.per.seqlen)
+ggplot(data = table_reads_seqlen, aes(x = length, y = count)) +
+  geom_col()
+
+# Filter the length of the sequences
+# (suggestion: select that length range accounting for many sequences)
+seqtab.nochim <- seqtab.nochim[, nchar(colnames(seqtab.nochim)) %in% seq(402, 428)]
+```
+
+# Step 9: Check the number of sequences retained in each step of the processing
+```{r}
+# IMPORTANT: this step can be made just in case we have one seqtab (one sequencing run)
+# Otherwise, skip this to the step 10)
+
+getN <- function(x) sum(getUniques(x))
+
+track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+rownames(track) <- sample.names
+
+# get the percentages
+track <- track %>%
+  as.data.frame() %>%
+  mutate(
+    Perc.filtered = filtered * 100 / input,
+    Perc.denoisedF = denoisedF * 100 / filtered,
+    Perc.denoisedR = denoisedR * 100 / filtered,
+    Perc.merged = merged * 100 / filtered,
+    Perc.nonchim = nonchim * 100 / merged,
+    Perc.retained = nonchim * 100 / input
+  )
+View(track) # here we could see the % of the sequences obtained after each step
+
+write.table(track, file = "Sequencing_quality.txt", sep = "\t", row.names = T, col.names = T)
+```
+
+# Step 10: Taxonomical classification
+
+```{r}
+taxa_rdp <- assignTaxonomy(seqtab.nochim, "/mnt/datos/databases/rdp_train_set_18_H.fa", multithread = TRUE)
+# indicate the path where the database is located.
+```
+
+# Step 11: Obtaining the ASV table
+```{r}
+# Format the data
+ASV <- seqtab.nochim
+ASVt <- t(ASV)
+
+# Replace NA values by "unclassified" and remove the column "species" created during the classification
+taxa_rdp_na <- apply(taxa_rdp, 2, tidyr::replace_na, "unclassified")[, -7]
+
+# Rename the ASVs (if we have 100 ASVs, we will name them from ASV001 to ASV100)
+number.digit <- nchar(as.integer(nrow(ASVt)))
+names <- paste0("ASV%0", number.digit, "d") # As many 0 as digits
+ASV_names <- sprintf(names, 1:nrow(ASVt))
+
+# Join taxonomy and ASV table
+ASV_table_classified_raw <- cbind(as.data.frame(taxa_rdp_na, stringsAsFactors = FALSE), as.data.frame(ASV_names, stringsAsFactors = FALSE), as.data.frame(ASVt, stringsAsFactors = FALSE))
+
+# Add the sequence of each ASV to the ASV table in the correct position
+ASV_seqs <- rownames(ASV_table_classified_raw)
+rownames(ASV_table_classified_raw) <- NULL
+ASV_table_classified_raw <- cbind(ASV_seqs, ASV_table_classified_raw)
+```
+
+# Step 12: Mock community quality control
+```{r}
+# Eliminacion de la MOCK---------------------------------
+MockCommunity <- function(data, MOCK_composition, ASV_column, choose.first = FALSE) {
+  # Get total number of sequences for each MOCK ASV
+  sum_ASVs_MOCK <- rowSums(data[, grep("MOCK", colnames(data)), drop = FALSE])
+
+  # Bind it to ASV_table
+  ASV_table_counts_MOCK <- cbind(data, sum_ASVs_MOCK)
+  colnames(ASV_table_counts_MOCK)[ncol(ASV_table_counts_MOCK)] <- c("Total counts MOCK")
+
+  # Sort ASV table according to MOCK ASV rel.abundance
+  ASV_table_counts_MOCK_sorted <- ASV_table_counts_MOCK[order(ASV_table_counts_MOCK$"Total counts MOCK", decreasing = TRUE), ]
+
+  # Calculate percentage
+  percentage <- NULL
+  for (i in 1:nrow(ASV_table_counts_MOCK_sorted)) {
+    if (isTRUE(any(ASV_table_counts_MOCK_sorted$Genus[i] %in% MOCK_composition[, 1]))) { # for each line, if Genus is equal to any of the MOCK members,continue with the next line (next)
+      next
+    } else {
+      if (isTRUE(choose.first)) {
+        percentage <- (ASV_table_counts_MOCK_sorted[i, ]$`Total counts MOCK` / sum(ASV_table_counts_MOCK_sorted$`Total counts MOCK`)) * 100
+        cat(
+          "First ASV found that does not belong to the MOCK community! It is", ASV_table_counts_MOCK_sorted[i, ][[ASV_column]], "which classifies as", ASV_table_counts_MOCK_sorted[i, ]$Genus, "\n", "and represents a",
+          round((ASV_table_counts_MOCK_sorted[i, ]$`Total counts MOCK` / sum(ASV_table_counts_MOCK_sorted$`Total counts MOCK`)) * 100, digits = 6),
+          "perc. of the sequences. This ASV was used to calculate the percentage"
+        )
+        break
+      }
+
+      # if it finds a ASV which does not belong to the MOCK community, make a question to user.
+      answer <- readline(prompt = cat(
+        ASV_table_counts_MOCK_sorted[i, ][[ASV_column]],
+        "does not belong to the MOCK community.",
+        "It representes a ",
+        round((ASV_table_counts_MOCK_sorted[i, ]$`Total counts MOCK` / sum(ASV_table_counts_MOCK_sorted$`Total counts MOCK`)) * 100, digits = 6),
+        " perc. of the sequences", "\n", "and it classifies as", ASV_table_counts_MOCK_sorted[i, ]$Genus, "\n", "Do you want to use this ASV to calculate the percentage?", "[answer yes or no]"
+      ))
+
+      if (answer == "no") { # if the user chooses not to use the first spurious ASV, go to the next one
+        next
+      }
+
+      if (answer == "yes") { # when the user says "yes", store de percentage and print the ASV name, classification and %
+        percentage <- (ASV_table_counts_MOCK_sorted[i, ]$`Total counts MOCK` / sum(ASV_table_counts_MOCK_sorted$`Total counts MOCK`)) * 100
+        cat(
+          "You made a decision!", ASV_table_counts_MOCK_sorted[i, ][[ASV_column]], "which classifies as", ASV_table_counts_MOCK_sorted[i, ]$Genus, "\n", "and represents a",
+          round((ASV_table_counts_MOCK_sorted[i, ]$`Total counts MOCK` / sum(ASV_table_counts_MOCK_sorted$`Total counts MOCK`)) * 100, digits = 6),
+          "perc. of the sequences, was used to calculate the percentage"
+        )
+        break
+      } else {
+        stop("Error: Answers have to fit  'yes' or 'no'")
+      }
+    }
+  }
+
+
+  # Remove MOCK columns
+  ASV_table_without_MOCK <- ASV_table_counts_MOCK_sorted[, -grep("MOCK", colnames(ASV_table_counts_MOCK_sorted))]
+
+  # Get number of sequences of each ASV without MOCK
+  rownames(ASV_table_without_MOCK) <- NULL
+  ASV_sums <- rowSums(ASV_table_without_MOCK[, 9:ncol(ASV_table_without_MOCK)])
+  # Get total number of sequences
+  sum.total <- sum(ASV_sums)
+  # Apply percentage to sequence number
+  nseq_cutoff <- (percentage / 100) * sum.total
+  # Filter table.
+  ASV_filtered <- ASV_table_without_MOCK[which(ASV_sums > nseq_cutoff), ]
+
+
+  # Sort table in ascending order of ASV names
+  ASV_filtered_sorted <- ASV_filtered[order(ASV_filtered[[ASV_column]]), ]
+  return(ASV_filtered_sorted)
+}
+
+ASV_filtered_MOCK <- MockCommunity(ASV_table_classified_raw, mock_composition, ASV_column = "ASV_names")
+
+# select the relative abundance of the first ASV that is not included in the Mock Community. That percentage will be considered the detection limit of sequencing
+
+# IMPORTANT: write down and keep this cut-off value if you will work also with ITS2 or fungal reads, because you will work just with same cut-off
+
+```
+
+# Step 13: Removal of Plastids, Plants, Chloroplast and other artifcats sequences
+```{r}
+ASV_final <- ASV_filtered_MOCK[(which(ASV_filtered_MOCK$Genus != "Streptophyta" &
+  ASV_filtered_MOCK$Genus != "Chlorophyta" &
+  ASV_filtered_MOCK$Genus != "Bacillariophyta" &
+  ASV_filtered_MOCK$Family != "Streptophyta" &
+  ASV_filtered_MOCK$Family != "Chlorophyta" &
+  ASV_filtered_MOCK$Family != "Bacillariophyta" &
+  ASV_filtered_MOCK$Family != "Mitochondria" &
+  ASV_filtered_MOCK$Class != "Chloroplast" &
+  ASV_filtered_MOCK$Order != "Chloroplast" &
+  ASV_filtered_MOCK$Kingdom != "Eukaryota" &
+  ASV_filtered_MOCK$Kingdom != "unclassified")), ]
+```
+
+# Step 14: Refinement of the taxonomy
+
+```{r}
+# Check the taxonomy of that ASVs classified at Phylum level as "Cyanobacteria/Chloroplast"
+View(ASV_final[which(ASV_final$Phylum == "Cyanobacteria/Chloroplast"), ])
+
+# Suggestion: if they are classified at Class level properly (as a Cyanobacteria), keep them
+
+ASV_final2 <- ASV_final[(which(ASV_final$Phylum != "Cyanobacteria/Chloroplast" | ASV_final$Class != "unclassified")), ]
+
+# Extract the sequences of those ASV classified as "Cyanobacteria/Chloroplast"
+cianos <- ASV_final2[which(ASV_final2$Phylum == "Cyanobacteria/Chloroplast"), ]
+seq_cianos <- as.list(cianos$ASV_seqs)
+write.fasta(seq_cianos, names = cianos$ASV_names, file.out = "cianos.fas", open = "w", nbchar = 1000, as.string = FALSE)
+
+# align the corresponding sequences by BLAST and compare them with those held in the nt database of NCBI
+system(("/home/programs/ncbi-blast-2.11.0+/bin/blastn -query cianos.fas -db /mnt/datos/databases/nt -out cianos_hits.txt -outfmt '6 std stitle' -show_gis -max_target_seqs 20 -parse_deflines -num_threads 10"), intern = TRUE)
+
+# (we verified that all the sequences corresponded to real cyanobacteria, so we did not remove them from the dataset)
+
+# Repeat the same with sequences not classified at Phylum level, since they can be artifacts,
+# even sequences of the plant host (specially if you are working with endosphere or plant tissues)
+unclassified_phyla <- ASV_final2[which(ASV_final2$Phylum == "unclassified"), ]
+seq_unclassified_phyla <- as.list(unclassified_phyla$ASV_seqs)
+write.fasta(seq_unclassified_phyla, names = unclassified_phyla$ASV_names, file.out = "unclassified_phyla.fas", open = "w", nbchar = 1000, as.string = FALSE)
+
+# BLAST
+system(("/home/programs/ncbi-blast-2.11.0+/bin/blastn -query unclassified_phyla.fas -db /mnt/datos/databases/nt -out unclassified_phyla_hits.txt -outfmt '6 std stitle' -show_gis -max_target_seqs 20 -parse_deflines -num_threads 10"), intern = TRUE)
+
+# (we detected that the ASV03686 corresponded to plant host, so we removed it)
+ASV_final_all_filters <- ASV_final2[(which(ASV_final2$Phylum != "Cyanobacteria/Chloroplast")), ]
+ASV_final_all_filters <- ASV_final_all_filters[(which(ASV_final_all_filters$ASV_names != "ASV03686")), ]
+
+# Save the definitive ASV table
+write.table(ASV_final_all_filters, file = "ASV_final.txt", sep = "\t")
+```
+
+

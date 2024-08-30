@@ -1,0 +1,333 @@
+---
+title: "Prepare DwC"
+author: Antonio J. Pérez-Luque <a href="https://orcid.org/0000-0002-1747-0469" target="orcid.widget"><img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>
+format: 
+  html:
+    toc: true
+execute:
+  warning: false
+  error: false
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(DT)
+```
+
+## Aim
+This script accomodate the data to DarwinCore Archive for the integration into GBIF.
+
+The desired structure of the Darwin Core Archive (DwC-A) encompasses comprehensive sampling event dataconsisting of `event-type` data, `occurrence` data and `measurementOrFact` type data. This structure is organised based on a hierarchical framework for sampling events. 
+
+We considered each tree as an event. In each tree (parentID) a soil sample is taken (eventID: S), also endosphere (eventID: E) and roots sample (eventID: R) for metabarcoding
+
+## Prepare data 
+```{r}
+bac_raw <- read_delim("data/ASV_bacterias.txt")
+bac <- bac_raw |> 
+  pivot_longer(cols = 
+                 c(everything(), 
+                   -any_of(c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "ASV"))),
+               values_to = "n", 
+               names_to = "sample") |> 
+  mutate(tree = str_sub(sample, end = -2),
+         target = str_sub(sample, start= -1)) |> 
+  mutate(target = case_when(
+    target == "E" ~ "Endosphere",
+    target == "R" ~ "Rhizosphere")
+  )
+
+fungi_raw <- read_delim("data/ASV_hongos.txt")
+fungi <- fungi_raw |> 
+  pivot_longer(cols = 
+                 c(everything(), 
+                   -any_of(c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "ASV"))),
+               values_to = "n", 
+               names_to = "sample") |> 
+  mutate(tree = str_sub(sample, end = -2),
+         target = str_sub(sample, start= -1)) |> 
+  mutate(target = case_when(
+    target == "E" ~ "Endosphere",
+    target == "R" ~ "Rhizosphere")
+  )
+
+
+md_events <- read_excel("data/metadata_trees.xlsx")
+
+soil_raw <- read_delim("data/DatosFisicoquimicos_Psylvestris.txt") |> 
+  clean_names() |> 
+  mutate(site = ifelse(site == "Snevada",  "S. Nevada", paste0("S. ", site))) |>
+  rename(tree = sample) |> 
+  mutate(eventID = paste0(tree, "S"))
+
+soil <- soil_raw |> 
+    pivot_longer(cols = 
+                 c(everything(), 
+                   -any_of(c("tree","site","condition", "eventID"))),
+               values_to = "value", 
+               names_to = "variable") 
+```
+
+## Prepare eventTable 
+
+### parentEventID
+
+```{r}
+proto_parent_event <- 
+  md_events |> 
+  mutate(
+    type = "Event",
+    eventType = "Site Visit", 
+    language = "en",
+    license = "https://creativecommons.org/licenses/by/4.0/legalcode.es",
+    institutionCode = "CSIC-EEZ",
+    datasetName = "Root-associated microbiota of decline-affected and asymptomatic Pinus sylvestris trees", 
+    habitat = "Pinus sylvestris tree", 
+    samplingProtocol = NA,
+    fieldNumber = tree,
+    bibliographicCitation = "Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. doi: 10.1016/j.scitotenv.2024.171858", 
+    eventDate = as.Date(as.character(sampling_date), format = "%Y%m%d"), 
+    countryCode = "ES", 
+    parentEventID = NA) |> 
+  unite("eventID", c("tree","sampling_date"), sep = "-", remove = FALSE) |> 
+  relocate(
+    eventID, parentEventID, eventDate,
+    type, eventType, language, license, 
+    bibliographicCitation, institutionCode, datasetName, 
+    samplingProtocol, 
+    year, month, day, 
+    continent, country, countryCode, stateProvince = province, municipality, locality = location,
+    decimalLatitude = lat, decimalLongitude = long, verbatimCoordinates = verbatim_coordinates,
+    verbatimElevation = Elevation, habitat, 
+    eventRemarks = health_status,
+    fieldNumber, 
+    locationID = site) |> 
+    dplyr::select(-verbatim_lat, -verbatim_long)
+```
+
+
+### soilEvent
+```{r}
+soil_event <- proto_parent_event |> 
+  dplyr::select(-parentEventID, -eventType, -samplingProtocol, -habitat) |> 
+  rename(parentEventID = eventID) |> 
+  mutate(protoID = paste0(tree, "S"),
+         eventType = "Sampling",
+         samplingProtocol = "Soil samples (500 g) to determine physicochemical parameters",
+         habitat = "Soil close to the roots of each target tree (Pinus sylvestris)") |> 
+  unite("eventID", c("protoID","sampling_date"), sep = "-", remove = TRUE)
+```
+
+
+### Rhizosphere and Endosphere Events 
+
+```{r}
+micro_event <- proto_parent_event |> 
+  inner_join((fungi |> dplyr::select(sample, tree) |> unique())) |> 
+  dplyr::select(-parentEventID, -eventType, -samplingProtocol, -habitat) |> 
+  rename(parentEventID = eventID) |> 
+  unite("eventID", c("sample","sampling_date"), sep = "-", remove = FALSE) |>
+  mutate(target = str_sub(sample, start= -1)) |> 
+  mutate(
+    eventType = "Sampling",
+    samplingProtocol = case_when(
+      target == "E" ~ "DNA extraction from the root endosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi",
+      target == "R" ~ "DNA extraction from the rhizosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi"
+    ),
+    habitat = case_when(
+      target == "E" ~ "Root endosphere of Pinus sylvestris",
+      target == "R" ~ "Rhizosphere of Pinus sylvestris"
+    )) |> 
+  dplyr::select(-sample, -target, -sampling_date)
+```
+
+
+```{r}
+#| eval: false
+#| echo: false
+# check names consistency 
+setdiff(names(proto_parent_event), names(soil_event))
+setdiff(names(soil_event), names(proto_parent_event))
+
+setdiff(names(proto_parent_event), names(micro_event))
+setdiff(names(micro_event), names(proto_parent_event))
+
+setdiff(names(soil_event), names(micro_event))
+setdiff(names(micro_event), names(soil_event))
+```
+
+### Combined events 
+```{r}
+events <- proto_parent_event |>
+  dplyr::select(-sampling_date) |> 
+  bind_rows(micro_event,soil_event) |> 
+  dplyr::select(-tree) 
+```
+
+```{r}
+#| eval: false
+#| echo: false
+DT::datatable(events,
+              rownames = FALSE,
+              filter = 'top',
+              options = list(
+                pageLength = 20, 
+                autoWidth = TRUE
+              ))
+```
+
+
+```{r}
+# Export table
+write_csv(events, "output/dwc_db/event.csv")
+```
+
+### Extended Measurement Or Facts
+```{r}
+dicc_variables_fq <- read_excel("data/fq_variables.xlsx")
+
+aux <- soil_event |> 
+  dplyr::select(eventID) |> 
+  separate(eventID, into = c("idsoil", "sampling_date"), remove = FALSE)
+
+mof <- soil |> 
+  dplyr::select(idsoil = eventID, variable, value) |> 
+  inner_join(dicc_variables_fq) |> 
+  inner_join(aux) |> 
+  unite("measurementID", c("eventID", "id_var"), sep = "-", remove = FALSE) |> 
+  mutate(
+    measurementDeterminedDate = as.Date(as.character(sampling_date), format = "%Y%m%d"),
+    measurementMethod = measurementMethod,
+    measurementRemarks = "",
+    measurementDeterminedBy = "Laboratorio Analítico Bioclínico (https://www.lab-sl.com/en/) Almería, Spain"
+  ) |> 
+  relocate(
+    measurementID, 
+    measurementType = name,
+    measurementValue = value, 
+    measurementUnit = unit,
+    measurementDeterminedDate,
+    measurementDeterminedBy,
+    measurementMethod, 
+    measurementRemarks) |> 
+  dplyr::select(-idsoil, -id_var, -sampling_date, -variable)
+
+```
+
+
+```{r}
+#| eval: false
+#| echo: false
+DT::datatable(mof,
+              rownames = FALSE,
+              filter = 'top',
+              options = list(
+                pageLength = 20, 
+                autoWidth = TRUE
+              ))
+```
+
+
+```{r}
+# Export table
+write_csv(mof, "output/dwc_db/mof.csv")
+```
+
+
+## Occurrences
+
+- occurrenceID: eventID + ASV + Date. *e.g.* =  `ASH01E-ASV00004-202204`
+
+### Bacteria
+```{r}
+df_idevents <- events |> 
+  filter(samplingProtocol != "Soil samples (500 g) to determine physicochemical parameters") |> 
+  filter(!is.na(parentEventID)) |> 
+  dplyr::select(eventID, habitat, license, institutionCode, language, datasetName, 
+                continent, country, countryCode, stateProvince, municipality, locality,
+                decimalLatitude, decimalLongitude) |> 
+  separate(eventID, into = c("sample", "sampling_date"), remove = FALSE)
+
+occ_bac <- bac |> 
+ filter(n > 0) |> 
+  inner_join(df_idevents) |> 
+  unite("occurrenceID", c("eventID","ASV"), sep = "-", remove = FALSE) |> 
+  mutate(
+    basisOfRecord = "MaterialSample",
+    collectionCode = "MAE_PSylvestris",
+    recordedBy = "Ana V. Lasa | Antonio J. Fernández-González | Pablo J. Villadas | Jesús Mercado-Blanco | Antonio J. Pérez-Luque | Manuel Fernández-López",
+    identifiedBy = "Ana V. Lasa",
+    identifiedByID = "https://orcid.org/0000-0003-3783-7157",
+    occurrenceStatus = case_when(
+      n == 0 ~ "absent", 
+      n > 0 ~ "present"),
+    preparations = "DNA extract",
+    nameAccordingToID = "Ribosomal Database Project RDP-II training set v.18", 
+    verbatimIdentification = ASV
+  ) |> 
+  rename(
+    taxonID = ASV,
+    individualCount = n) |> 
+  mutate(across(c(Kingdom, Phylum, Class, Order, Family, Genus), ~replace(., . == "unclassified", NA))) |> 
+  relocate(
+    occurrenceID, language, license, institutionCode, collectionCode, datasetName, 
+    basisOfRecord, recordedBy, individualCount, occurrenceStatus, preparations,
+    eventID, identifiedBy, identifiedByID, taxonID, nameAccordingToID,
+    kingdom = Kingdom, phylum = Phylum, class = Class, order = Order, family = Family, genus = Genus,
+    verbatimIdentification, 
+    continent, country, countryCode, stateProvince, municipality, locality,
+    decimalLatitude, decimalLongitude, habitat,
+    fieldNumber = sample) |> 
+  dplyr::select(-tree, -target, -sampling_date)
+
+```
+
+### Fungi 
+```{r}
+occ_fungi <- fungi |> 
+ filter(n > 0) |> 
+  inner_join(df_idevents) |> 
+  unite("occurrenceID", c("eventID","ASV"), sep = "-", remove = FALSE) |> 
+  mutate(
+    basisOfRecord = "MaterialSample",
+    collectionCode = "MAE_PSylvestris",
+    recordedBy = "Ana V. Lasa | Antonio J. Fernández-González | Pablo J. Villadas | Jesús Mercado-Blanco | Antonio J. Pérez-Luque | Manuel Fernández-López",
+    identifiedBy = "Ana V. Lasa",
+    identifiedByID = "https://orcid.org/0000-0003-3783-7157",
+    occurrenceStatus = case_when(
+      n == 0 ~ "absent", 
+      n > 0 ~ "present"),
+    preparations = "DNA extract",
+    nameAccordingToID = "Ribosomal Database Project RDP-II training set v.18", 
+    verbatimIdentification = ASV
+  ) |> 
+  rename(
+    taxonID = ASV,
+    individualCount = n) |> 
+  mutate(across(c(Kingdom, Phylum, Class, Order, Family, Genus), ~replace(., . == "unclassified", NA))) |> 
+  relocate(
+    occurrenceID, language, license, institutionCode, collectionCode, datasetName, 
+    basisOfRecord, recordedBy, individualCount, occurrenceStatus, preparations,
+    eventID, identifiedBy, identifiedByID, taxonID, nameAccordingToID,
+    kingdom = Kingdom, phylum = Phylum, class = Class, order = Order, family = Family, genus = Genus,
+    verbatimIdentification, 
+    continent, country, countryCode, stateProvince, municipality, locality,
+    decimalLatitude, decimalLongitude, habitat,
+    fieldNumber = sample) |> 
+  dplyr::select(-tree, -target, -sampling_date)
+
+```
+
+
+```{r}
+occ <- bind_rows(occ_bac, occ_fungi)
+
+# Export table
+write_csv(occ, "output/dwc_db/occ.csv")
+```
+
+
+
+
