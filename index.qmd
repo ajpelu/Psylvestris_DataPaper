@@ -82,7 +82,7 @@ In our case, the 528 bacterial samples (+replicates of the MockCommunity) were t
 Thus, all the samples of SUMHAL project were futher processed altogether, although the Data Descriptor **just** included samples corresponding to *P. sylvestris* trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-project of the SUMHAL project
 
 
-# Authors
+## Authors
 - Ana V Lasa  <a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget">
 <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>
 
@@ -101,5 +101,15 @@ Thus, all the samples of SUMHAL project were futher processed altogether, althou
 - Manuel Fernández-López <a href="https://orcid.org/0000-0003-2366-6908" target="orcid.widget">
 <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>
 
+## How to cite: 
+
+### Repository: 
+Ana V. Lasa & Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic *Pinus sylvestris* trees. INCLUIR DOI ZENODO https://doi.org/10.5281/zenodo.7350714
+
+### Main paper: 
+Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. https://doi.org/10.1016/j.scitotenv.2024.171858 
+
+### Data Paper: 
+Include the cite when the DataPaper is published 
 
 # References 

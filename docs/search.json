@@ -56,6 +56,20 @@
     "text": "Sample sequencing scheme\nAccording to DADA2 developers, when our scientific projects include 2 or more sequencing runs, they should be processed separatedly. Once the Sequence Tables are obtained, all of them have to be merged into a one merged table, and we can go on processing all the samples of the same scientific project from this unique merged table. In our case, the 528 bacterial samples (+replicates of the MockCommunity) were thus separatedly processed according to the corresponding runs. Then, the 5 Sequence Table were joined into a just one table, all we followed processing that table. The same procedure was applied for fungal dataset.\nThus, all the samples of SUMHAL project were futher processed altogether, although the Data Descriptor just included samples corresponding to P. sylvestris trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-project of the SUMHAL project"
   },
   {
+    "objectID": "index.html#authors",
+    "href": "index.html#authors",
+    "title": "Script for data paper: Root-associated microbiota of decline-affected and asymptomatic Pinus sylvestris trees",
+    "section": "Authors",
+    "text": "Authors\n\nAna V Lasa  \nAntonio J. Pérez-Luque  \nAntonio José Fernández-González  \nPablo J. Villadas  \nJesús Mercado-Blanco  \nManuel Fernández-López"
+  },
+  {
+    "objectID": "index.html#how-to-cite",
+    "href": "index.html#how-to-cite",
+    "title": "Script for data paper: Root-associated microbiota of decline-affected and asymptomatic Pinus sylvestris trees",
+    "section": "How to cite:",
+    "text": "How to cite:\n\nRepository:\nAna V. Lasa & Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic Pinus sylvestris trees. INCLUIR DOI ZENODO https://doi.org/10.5281/zenodo.7350714\n\n\nMain paper:\nLasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. https://doi.org/10.1016/j.scitotenv.2024.171858\n\n\nData Paper:\nInclude the cite when the DataPaper is published"
+  },
+  {
     "objectID": "sequencing_reads_processing_ITS2.html",
     "href": "sequencing_reads_processing_ITS2.html",
     "title": "Sequencing Reads Processing ITS2",
