@@ -12,13 +12,13 @@ website:
         - href: analysis_16S.qmd
           text: Data Analysis 16S
         - href: sequencing_reads_processing_16S.qmd
-          text: Sequencing Reads Processing 16  
+          text: "16S sequencing reads processing"  
       - text: "Fungi"
         menu:
         - href: analysis_ITS2.qmd
           text: Data Analysis ITS2
         - href: sequencing_reads_processing_ITS2.qmd
-          text: Sequencing Reads Processing ITS2
+          text: "ITS2 sequencing reads processing"
       - href: prepare_dwc.qmd
         text: DarwinCore accomodation
 

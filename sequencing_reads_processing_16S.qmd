@@ -174,7 +174,7 @@ head(figaro) # check the results of figaro and select that maxExpectedError with
 # write down the maxEE and the trimming positions, in this example: trimming positions [F,R]: [269,215]; maxEE[F,R]: [2,2]
 ```
 
-## Step 4. Filter and trimming steps 
+# Step 4. Filter and trimming steps 
 
 ```{r}
 # Create the folder "filtered" to save the trimmed reads

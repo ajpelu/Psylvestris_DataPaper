@@ -133,7 +133,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="./sequencing_reads_processing_16S.html">
- <span class="dropdown-text">Sequencing Reads Processing 16</span></a>
+ <span class="dropdown-text">16S sequencing reads processing</span></a>
   </li>  
     </ul>
   </li>
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="./sequencing_reads_processing_ITS2.html">
- <span class="dropdown-text">Sequencing Reads Processing ITS2</span></a>
+ <span class="dropdown-text">ITS2 sequencing reads processing</span></a>
   </li>  
     </ul>
   </li>
@@ -175,10 +175,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#aim" id="toc-aim" class="nav-link active" data-scroll-target="#aim">Aim</a></li>
   <li><a href="#step-1-adaption-of-the-file-names" id="toc-step-1-adaption-of-the-file-names" class="nav-link" data-scroll-target="#step-1-adaption-of-the-file-names">Step 1: Adaption of the file names</a></li>
   <li><a href="#step-2-check-the-quality-of-the-reads" id="toc-step-2-check-the-quality-of-the-reads" class="nav-link" data-scroll-target="#step-2-check-the-quality-of-the-reads">Step 2: Check the quality of the reads</a></li>
-  <li><a href="#step-3.-figaro" id="toc-step-3.-figaro" class="nav-link" data-scroll-target="#step-3.-figaro">Step 3. FIGARO</a>
-  <ul class="collapse">
+  <li><a href="#step-3.-figaro" id="toc-step-3.-figaro" class="nav-link" data-scroll-target="#step-3.-figaro">Step 3. FIGARO</a></li>
   <li><a href="#step-4.-filter-and-trimming-steps" id="toc-step-4.-filter-and-trimming-steps" class="nav-link" data-scroll-target="#step-4.-filter-and-trimming-steps">Step 4. Filter and trimming steps</a></li>
-  </ul></li>
   <li><a href="#step-5-cutadapt.-primer-removal-from-f-and-r-reads" id="toc-step-5-cutadapt.-primer-removal-from-f-and-r-reads" class="nav-link" data-scroll-target="#step-5-cutadapt.-primer-removal-from-f-and-r-reads">Step 5: CUTADAPT. primer removal from F and R reads</a></li>
   <li><a href="#step-6-dada2" id="toc-step-6-dada2" class="nav-link" data-scroll-target="#step-6-dada2">Step 6: DADA2</a></li>
   <li><a href="#step-7-merge-seqtabs-obtained-from-different-sequencing-runs" id="toc-step-7-merge-seqtabs-obtained-from-different-sequencing-runs" class="nav-link" data-scroll-target="#step-7-merge-seqtabs-obtained-from-different-sequencing-runs">Step 7: Merge SeqTabs obtained from different sequencing runs</a></li>
@@ -380,8 +378,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(figaro) <span class="co"># check the results of figaro and select that maxExpectedError with which you obtain a good score and a good percentage of retained reads</span></span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co"># write down the maxEE and the trimming positions, in this example: trimming positions [F,R]: [269,215]; maxEE[F,R]: [2,2]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="step-4.-filter-and-trimming-steps" class="level2">
-<h2 class="anchored" data-anchor-id="step-4.-filter-and-trimming-steps">Step 4. Filter and trimming steps</h2>
+</section>
+<section id="step-4.-filter-and-trimming-steps" class="level1">
+<h1>Step 4. Filter and trimming steps</h1>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the folder "filtered" to save the trimmed reads</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>filtFs <span class="ot">&lt;-</span> <span class="fu">file.path</span>(path, <span class="st">"filtered"</span>, <span class="fu">basename</span>(fnFs))</span>
@@ -402,7 +401,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(out)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
 </section>
 <section id="step-5-cutadapt.-primer-removal-from-f-and-r-reads" class="level1">
 <h1>Step 5: CUTADAPT. primer removal from F and R reads</h1>
@@ -1410,7 +1408,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb17-184"><a href="#cb17-184" aria-hidden="true" tabindex="-1"></a><span class="co"># write down the maxEE and the trimming positions, in this example: trimming positions [F,R]: [269,215]; maxEE[F,R]: [2,2]</span></span>
 <span id="cb17-185"><a href="#cb17-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb17-186"><a href="#cb17-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 4. Filter and trimming steps </span></span>
+<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a><span class="fu"># Step 4. Filter and trimming steps </span></span>
 <span id="cb17-188"><a href="#cb17-188" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-191"><a href="#cb17-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb17-192"><a href="#cb17-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the folder "filtered" to save the trimmed reads</span></span>

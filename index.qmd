@@ -47,7 +47,7 @@ Thus, we have 11 groups of samples x 2 Seasons x 2 Plant compartments x 2 Organi
 This repository contains different scripts: those related to the DNA sequencing for fungal an bacterial datasets, and other related to the preparation and standardization of the data to the DarwinCore Archive to integtrate the data into GBIF
 
 ## Sequencing data
-This scripts explaing all the steps the steps from the fastq files to a filtered ASV table.
+These scripts explain all the steps the steps from the fastq files to a filtered ASV table.
 
 - [bacterial](sequencing_reads_processing_16S.qmd)
 - [fungal](sequencing_reads_processing_ITS2.qmd)
