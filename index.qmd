@@ -8,7 +8,7 @@ This repository contains scripts and analysis used for the datapaper "Root-assoc
 # Introduction  
 
 The SUMHAL Project aims at deciphering the changes in the microbial communities associated to the roots of different *Pinus* species as a consequence of forest decline. Three different mountainous areas covered by *Pinus* spp. stands in the Southeast Spain were selected for this purpose.
-Since different pine species in different conditions were selected, different sub-project were created, which resulted in different scientific publications. Below you will find specific information about the main project and sub-projects
+Since different pine species in different conditions were selected, different sub-projects were created, which resulted in different scientific publications. Below you will find specific information about the main project and sub-projects
 
 # Experimental design
 
@@ -44,10 +44,10 @@ Thus, we have 11 groups of samples x 2 Seasons x 2 Plant compartments x 2 Organi
 
 # What will I find in this GitHub project?
 
-This repository contains different scripts: those related to the DNA sequencing for fungal an bacterial datasets, and other related to the preparation and standardization of the data to the DarwinCore Archive to integtrate the data into GBIF
+This repository contains different scripts: those related to the DNA sequencing for fungal and bacterial datasets, and other related to the preparation and standardization of the data to the DarwinCore Archive to integrate the data into GBIF
 
 ## Sequencing data
-These scripts explain all the steps the steps from the fastq files to a filtered ASV table.
+These scripts explain all the steps from the fastq files to a filtered ASV table.
 
 - [bacterial](sequencing_reads_processing_16S.qmd)
 - [fungal](sequencing_reads_processing_ITS2.qmd)
@@ -61,7 +61,7 @@ All the steps from the previously obtained ASV table to the obtaining of the rar
 ## Data integration into GBIF
 - [Steps to accommodate the data into Darwin-Core Archive (for GBIF Integration)]()
 
-# Processing of Illumina MiSeq sequencing reads (16S V3-V4 and ITS2)
+# Processing of Illumina MiSeq sequencing reads (16S rRNA V3-V4 hypervariable regions and ITS2)
 ## Sample sequencing scheme
 Total DNA was extracted from rhizosphere and root endosphere samples according to @Lasa2024. Due to the high number of samples, DNA had to be sequenced in different MiSeq runs. So, finally, we got the following sequencing scheme:
 
@@ -73,17 +73,17 @@ Total DNA was extracted from rhizosphere and root endosphere samples according t
 	 - Run 5: some samples from endosphere and other samples from root endosphere, summer 2021.
 It should be taken into account that in each sequencing run, 3 replicates of a MockCommunity were included.
 
-The Data descriptor manuscript describes the data corresponding to the sub-project that included just ***P. sylvestris*** trees from **Sierra Nevada, Sierra de Baza and Sierra de Almijara, Tejeda y Alhama** (both symptomatic and decline-affected trees, according the Table above) obtained in **spring 2022**. In this project, both **fungal** and **bacterial** communities inhabiting the **rhizosphere** and **root endosphere** of the selected trees were considered.
+The Data descriptor manuscript describes the data corresponding to the sub-project that included just ***P. sylvestris*** trees from **Sierra Nevada, Sierra de Baza and Sierra de Almijara, Tejeda y Alhama** (both symptomatic and decline-affected trees, according to the Table above) obtained in **spring 2022**. In this project, both **fungal** and **bacterial** communities inhabiting the **rhizosphere** and **root endosphere** of the selected trees were considered.
 
 ## Sample sequencing scheme
-According to DADA2 developers, when our scientific projects include 2 or more sequencing runs, they should be processed separatedly. Once the Sequence Tables are obtained, all of them have to be merged into a one merged table, and we can go on processing all the samples of the same scientific project from this unique merged table.
-In our case, the 528 bacterial samples (+replicates of the MockCommunity) were thus separatedly processed according to the corresponding runs. Then, the 5 Sequence Table were joined into a just one table, all we followed processing that table. The same procedure was applied for fungal dataset.
+According to DADA2 developers, when our scientific projects include 2 or more sequencing runs, they should be processed separately. Once the Sequence Tables are obtained, all of them have to be merged into a one merged table, and we can go on processing all the samples of the same scientific project from this unique merged table.
+In our case, the 528 bacterial samples (+replicates of the MockCommunity) were thus separately processed according to the corresponding runs. Then, the 5 Sequence Table were joined into a just one table, and we followed processing that table. The same procedure was applied for fungal dataset.
 
-Thus, all the samples of SUMHAL project were futher processed altogether, although the Data Descriptor **just** included samples corresponding to *P. sylvestris* trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-project of the SUMHAL project
+Thus, all the samples of SUMHAL project were further processed altogether, although the Data Descriptor **just** included samples corresponding to *P. sylvestris* trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-projects of the SUMHAL project
 
 
 ## Authors
-- Ana V Lasa  <a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget">
+- [Ana V. Lasa](https://github.com/anitalasa) <a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget">
 <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>
 
 - [Antonio J. Pérez-Luque](https://github.com/ajpelu) <a href="https://orcid.org/0000-0002-1747-0469" target="orcid.widget">
@@ -104,12 +104,12 @@ Thus, all the samples of SUMHAL project were futher processed altogether, althou
 ## How to cite: 
 
 ### Repository: 
-Ana V. Lasa & Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic *Pinus sylvestris* trees. INCLUIR DOI ZENODO https://doi.org/10.5281/zenodo.7350714
+Ana V. Lasa & Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic *Pinus sylvestris* trees.  https://doi.org/10.5281/zenodo.13711241
 
 ### Main paper: 
-Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. https://doi.org/10.1016/j.scitotenv.2024.171858 
+Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. https://doi.org/10.1016/j.scitotenv.2024.171858
 
 ### Data Paper: 
-Include the cite when the DataPaper is published 
+Building, still unpublished
 
 # References 
