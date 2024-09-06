@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - text: "Bacteria"
+        menu:
+        - href: analysis_16S.qmd
+          text: Data Analysis 16S
+        - href: sequencing_reads_processing_16S.qmd
+          text: "16S sequencing reads processing"  
+      - text: "Fungi"
+        menu:
+        - href: analysis_ITS2.qmd
+          text: Data Analysis ITS2
+        - href: sequencing_reads_processing_ITS2.qmd
+          text: "ITS2 sequencing reads processing"
+      - href: prepare_dwc.qmd
+        text: DarwinCore accomodation
+
+format:
+  html:
+    theme: yeti
+    css: styles.css
+    toc: true
+    code-fold: false
+    code-tools: true
