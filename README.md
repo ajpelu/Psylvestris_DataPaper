@@ -16,7 +16,7 @@ This study was funded by:
 ## How to cite: 
 
 ### Data Paper: 
-Inclir la cita 
+Building, still unpublished
 
 ### Repository: 
 Ana V. Lasa & Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic *Pinus sylvestris* trees. http://doi.org/10.5281/zenodo.13711241
