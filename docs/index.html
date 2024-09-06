@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.552">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -22,7 +22,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -58,7 +58,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -99,13 +98,7 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
-  "show-item-context": false,
+  "limit": 20,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -114,7 +107,6 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
-    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -129,7 +121,7 @@ div.csl-indent {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -138,47 +130,47 @@ div.csl-indent {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
-<span class="menu-text">Home</span></a>
+    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bacteria" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-bacteria" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
  <span class="menu-text">Bacteria</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-bacteria">    
         <li>
-    <a class="dropdown-item" href="./analysis_16S.html">
+    <a class="dropdown-item" href="./analysis_16S.html" rel="" target="">
  <span class="dropdown-text">Data Analysis 16S</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./sequencing_reads_processing_16S.html">
+    <a class="dropdown-item" href="./sequencing_reads_processing_16S.html" rel="" target="">
  <span class="dropdown-text">16S sequencing reads processing</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-fungi" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-fungi" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
  <span class="menu-text">Fungi</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-fungi">    
         <li>
-    <a class="dropdown-item" href="./analysis_ITS2.html">
+    <a class="dropdown-item" href="./analysis_ITS2.html" rel="" target="">
  <span class="dropdown-text">Data Analysis ITS2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./sequencing_reads_processing_ITS2.html">
+    <a class="dropdown-item" href="./sequencing_reads_processing_ITS2.html" rel="" target="">
  <span class="dropdown-text">ITS2 sequencing reads processing</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./prepare_dwc.html"> 
-<span class="menu-text">DarwinCore accomodation</span></a>
+    <a class="nav-link" href="./prepare_dwc.html" rel="" target="">
+ <span class="menu-text">DarwinCore accomodation</span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools ms-auto">
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -199,7 +191,7 @@ div.csl-indent {
   <li><a href="#data-analysis" id="toc-data-analysis" class="nav-link" data-scroll-target="#data-analysis">Data analysis</a></li>
   <li><a href="#data-integration-into-gbif" id="toc-data-integration-into-gbif" class="nav-link" data-scroll-target="#data-integration-into-gbif">Data integration into GBIF</a></li>
   </ul></li>
-  <li><a href="#processing-of-illumina-miseq-sequencing-reads-16s-v3-v4-and-its2" id="toc-processing-of-illumina-miseq-sequencing-reads-16s-v3-v4-and-its2" class="nav-link" data-scroll-target="#processing-of-illumina-miseq-sequencing-reads-16s-v3-v4-and-its2">Processing of Illumina MiSeq sequencing reads (16S V3-V4 and ITS2)</a>
+  <li><a href="#processing-of-illumina-miseq-sequencing-reads-16s-rrna-v3-v4-hypervariable-regions-and-its2" id="toc-processing-of-illumina-miseq-sequencing-reads-16s-rrna-v3-v4-hypervariable-regions-and-its2" class="nav-link" data-scroll-target="#processing-of-illumina-miseq-sequencing-reads-16s-rrna-v3-v4-hypervariable-regions-and-its2">Processing of Illumina MiSeq sequencing reads (16S rRNA V3-V4 hypervariable regions and ITS2)</a>
   <ul class="collapse">
   <li><a href="#sample-sequencing-scheme" id="toc-sample-sequencing-scheme" class="nav-link" data-scroll-target="#sample-sequencing-scheme">Sample sequencing scheme</a></li>
   <li><a href="#sample-sequencing-scheme-1" id="toc-sample-sequencing-scheme-1" class="nav-link" data-scroll-target="#sample-sequencing-scheme-1">Sample sequencing scheme</a></li>
@@ -233,14 +225,12 @@ div.csl-indent {
   </div>
   
 
-
 </header>
-
 
 <p>This repository contains scripts and analysis used for the datapaper “Root-associated microbiota of decline-affected and asymptomatic <em>Pinus sylvestris</em> trees”</p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>The SUMHAL Project aims at deciphering the changes in the microbial communities associated to the roots of different <em>Pinus</em> species as a consequence of forest decline. Three different mountainous areas covered by <em>Pinus</em> spp. stands in the Southeast Spain were selected for this purpose. Since different pine species in different conditions were selected, different sub-project were created, which resulted in different scientific publications. Below you will find specific information about the main project and sub-projects</p>
+<p>The SUMHAL Project aims at deciphering the changes in the microbial communities associated to the roots of different <em>Pinus</em> species as a consequence of forest decline. Three different mountainous areas covered by <em>Pinus</em> spp. stands in the Southeast Spain were selected for this purpose. Since different pine species in different conditions were selected, different sub-projects were created, which resulted in different scientific publications. Below you will find specific information about the main project and sub-projects</p>
 </section>
 <section id="experimental-design" class="level1">
 <h1>Experimental design</h1>
@@ -368,10 +358,10 @@ div.csl-indent {
 </section>
 <section id="what-will-i-find-in-this-github-project" class="level1">
 <h1>What will I find in this GitHub project?</h1>
-<p>This repository contains different scripts: those related to the DNA sequencing for fungal an bacterial datasets, and other related to the preparation and standardization of the data to the DarwinCore Archive to integtrate the data into GBIF</p>
+<p>This repository contains different scripts: those related to the DNA sequencing for fungal and bacterial datasets, and other related to the preparation and standardization of the data to the DarwinCore Archive to integrate the data into GBIF</p>
 <section id="sequencing-data" class="level2">
 <h2 class="anchored" data-anchor-id="sequencing-data">Sequencing data</h2>
-<p>These scripts explain all the steps the steps from the fastq files to a filtered ASV table.</p>
+<p>These scripts explain all the steps from the fastq files to a filtered ASV table.</p>
 <ul>
 <li><a href="./sequencing_reads_processing_16S.html">bacterial</a></li>
 <li><a href="./sequencing_reads_processing_ITS2.html">fungal</a></li>
@@ -392,8 +382,8 @@ div.csl-indent {
 </ul>
 </section>
 </section>
-<section id="processing-of-illumina-miseq-sequencing-reads-16s-v3-v4-and-its2" class="level1">
-<h1>Processing of Illumina MiSeq sequencing reads (16S V3-V4 and ITS2)</h1>
+<section id="processing-of-illumina-miseq-sequencing-reads-16s-rrna-v3-v4-hypervariable-regions-and-its2" class="level1">
+<h1>Processing of Illumina MiSeq sequencing reads (16S rRNA V3-V4 hypervariable regions and ITS2)</h1>
 <section id="sample-sequencing-scheme" class="level2">
 <h2 class="anchored" data-anchor-id="sample-sequencing-scheme">Sample sequencing scheme</h2>
 <p>Total DNA was extracted from rhizosphere and root endosphere samples according to <span class="citation" data-cites="Lasa2024">Lasa et al. (<a href="#ref-Lasa2024" role="doc-biblioref">2024</a>)</span>. Due to the high number of samples, DNA had to be sequenced in different MiSeq runs. So, finally, we got the following sequencing scheme:</p>
@@ -407,17 +397,17 @@ div.csl-indent {
 <li>Run 5: some samples from endosphere and other samples from root endosphere, summer 2021. It should be taken into account that in each sequencing run, 3 replicates of a MockCommunity were included.</li>
 </ul></li>
 </ul>
-<p>The Data descriptor manuscript describes the data corresponding to the sub-project that included just <strong><em>P. sylvestris</em></strong> trees from <strong>Sierra Nevada, Sierra de Baza and Sierra de Almijara, Tejeda y Alhama</strong> (both symptomatic and decline-affected trees, according the Table above) obtained in <strong>spring 2022</strong>. In this project, both <strong>fungal</strong> and <strong>bacterial</strong> communities inhabiting the <strong>rhizosphere</strong> and <strong>root endosphere</strong> of the selected trees were considered.</p>
+<p>The Data descriptor manuscript describes the data corresponding to the sub-project that included just <strong><em>P. sylvestris</em></strong> trees from <strong>Sierra Nevada, Sierra de Baza and Sierra de Almijara, Tejeda y Alhama</strong> (both symptomatic and decline-affected trees, according to the Table above) obtained in <strong>spring 2022</strong>. In this project, both <strong>fungal</strong> and <strong>bacterial</strong> communities inhabiting the <strong>rhizosphere</strong> and <strong>root endosphere</strong> of the selected trees were considered.</p>
 </section>
 <section id="sample-sequencing-scheme-1" class="level2">
 <h2 class="anchored" data-anchor-id="sample-sequencing-scheme-1">Sample sequencing scheme</h2>
-<p>According to DADA2 developers, when our scientific projects include 2 or more sequencing runs, they should be processed separatedly. Once the Sequence Tables are obtained, all of them have to be merged into a one merged table, and we can go on processing all the samples of the same scientific project from this unique merged table. In our case, the 528 bacterial samples (+replicates of the MockCommunity) were thus separatedly processed according to the corresponding runs. Then, the 5 Sequence Table were joined into a just one table, all we followed processing that table. The same procedure was applied for fungal dataset.</p>
-<p>Thus, all the samples of SUMHAL project were futher processed altogether, although the Data Descriptor <strong>just</strong> included samples corresponding to <em>P. sylvestris</em> trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-project of the SUMHAL project</p>
+<p>According to DADA2 developers, when our scientific projects include 2 or more sequencing runs, they should be processed separately. Once the Sequence Tables are obtained, all of them have to be merged into a one merged table, and we can go on processing all the samples of the same scientific project from this unique merged table. In our case, the 528 bacterial samples (+replicates of the MockCommunity) were thus separately processed according to the corresponding runs. Then, the 5 Sequence Table were joined into a just one table, and we followed processing that table. The same procedure was applied for fungal dataset.</p>
+<p>Thus, all the samples of SUMHAL project were further processed altogether, although the Data Descriptor <strong>just</strong> included samples corresponding to <em>P. sylvestris</em> trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-projects of the SUMHAL project</p>
 </section>
 <section id="authors" class="level2">
 <h2 class="anchored" data-anchor-id="authors">Authors</h2>
 <ul>
-<li><p>Ana V Lasa <a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"></a></p></li>
+<li><p><a href="https://github.com/anitalasa">Ana V. Lasa</a> <a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"></a></p></li>
 <li><p><a href="https://github.com/ajpelu">Antonio J. Pérez-Luque</a> <a href="https://orcid.org/0000-0002-1747-0469" target="orcid.widget"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"></a></p></li>
 <li><p>Antonio José Fernández-González <a href="https://orcid.org/0000-0002-1938-5436" target="orcid.widget"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"></a></p></li>
 <li><p>Pablo J. Villadas <a href="https://orcid.org/0000-0001-8662-8883" target="orcid.widget"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"></a></p></li>
@@ -429,7 +419,7 @@ div.csl-indent {
 <h2 class="anchored" data-anchor-id="how-to-cite">How to cite:</h2>
 <section id="repository" class="level3">
 <h3 class="anchored" data-anchor-id="repository">Repository:</h3>
-<p>Ana V. Lasa &amp; Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic <em>Pinus sylvestris</em> trees. INCLUIR DOI ZENODO https://doi.org/10.5281/zenodo.7350714</p>
+<p>Ana V. Lasa &amp; Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic <em>Pinus sylvestris</em> trees. https://doi.org/10.5281/zenodo.13711241</p>
 </section>
 <section id="main-paper" class="level3">
 <h3 class="anchored" data-anchor-id="main-paper">Main paper:</h3>
@@ -437,7 +427,7 @@ div.csl-indent {
 </section>
 <section id="data-paper" class="level3">
 <h3 class="anchored" data-anchor-id="data-paper">Data Paper:</h3>
-<p>Include the cite when the DataPaper is published</p>
+<p>Building, still unpublished</p>
 </section>
 </section>
 </section>
@@ -450,7 +440,7 @@ div.csl-indent {
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-Lasa2024" class="csl-entry" role="listitem">
 Lasa, Ana V., Antonio José Fernández-González, Pablo J. Villadas, Jesús Mercado-Blanco, Antonio J. Pérez-Luque, and Manuel Fernández-López. 2024. <span>“Mediterranean Pine Forest Decline: A Matter of Root-Associated Microbiota and Climate Change.”</span> <em>Science of The Total Environment</em> 926: 171858. <a href="https://doi.org/10.1016/j.scitotenv.2024.171858">https://doi.org/10.1016/j.scitotenv.2024.171858</a>.
 </div>
@@ -585,27 +575,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -615,17 +588,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -637,130 +601,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
-          }
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
-        }
-        return container.innerHTML
-      } else {
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
-      }
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
-          }
-        } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
-            if (note !== null) {
-              const html = processXRef(id, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
+      return note.innerHTML;
     });
   }
       let selectedAnnoteEl;
@@ -804,7 +645,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -830,32 +670,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -925,7 +739,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction  </span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>The SUMHAL Project aims at deciphering the changes in the microbial communities associated to the roots of different *Pinus* species as a consequence of forest decline. Three different mountainous areas covered by *Pinus* spp. stands in the Southeast Spain were selected for this purpose.</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>Since different pine species in different conditions were selected, different sub-project were created, which resulted in different scientific publications. Below you will find specific information about the main project and sub-projects</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>Since different pine species in different conditions were selected, different sub-projects were created, which resulted in different scientific publications. Below you will find specific information about the main project and sub-projects</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># Experimental design</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
@@ -961,10 +775,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu"># What will I find in this GitHub project?</span></span>
 <span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>This repository contains different scripts: those related to the DNA sequencing for fungal an bacterial datasets, and other related to the preparation and standardization of the data to the DarwinCore Archive to integtrate the data into GBIF</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>This repository contains different scripts: those related to the DNA sequencing for fungal and bacterial datasets, and other related to the preparation and standardization of the data to the DarwinCore Archive to integrate the data into GBIF</span>
 <span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sequencing data</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>These scripts explain all the steps the steps from the fastq files to a filtered ASV table.</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>These scripts explain all the steps from the fastq files to a filtered ASV table.</span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">bacterial</span><span class="co">](sequencing_reads_processing_16S.qmd)</span></span>
 <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">fungal</span><span class="co">](sequencing_reads_processing_ITS2.qmd)</span></span>
@@ -978,7 +792,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data integration into GBIF</span></span>
 <span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Steps to accommodate the data into Darwin-Core Archive (for GBIF Integration)</span><span class="co">]()</span></span>
 <span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="fu"># Processing of Illumina MiSeq sequencing reads (16S V3-V4 and ITS2)</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="fu"># Processing of Illumina MiSeq sequencing reads (16S rRNA V3-V4 hypervariable regions and ITS2)</span></span>
 <span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sample sequencing scheme</span></span>
 <span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>Total DNA was extracted from rhizosphere and root endosphere samples according to @Lasa2024. Due to the high number of samples, DNA had to be sequenced in different MiSeq runs. So, finally, we got the following sequencing scheme:</span>
 <span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
@@ -990,49 +804,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="ss">     - </span>Run 5: some samples from endosphere and other samples from root endosphere, summer 2021.</span>
 <span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>It should be taken into account that in each sequencing run, 3 replicates of a MockCommunity were included.</span>
 <span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>The Data descriptor manuscript describes the data corresponding to the sub-project that included just ***P. sylvestris*** trees from **Sierra Nevada, Sierra de Baza and Sierra de Almijara, Tejeda y Alhama** (both symptomatic and decline-affected trees, according the Table above) obtained in **spring 2022**. In this project, both **fungal** and **bacterial** communities inhabiting the **rhizosphere** and **root endosphere** of the selected trees were considered.</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>The Data descriptor manuscript describes the data corresponding to the sub-project that included just ***P. sylvestris*** trees from **Sierra Nevada, Sierra de Baza and Sierra de Almijara, Tejeda y Alhama** (both symptomatic and decline-affected trees, according to the Table above) obtained in **spring 2022**. In this project, both **fungal** and **bacterial** communities inhabiting the **rhizosphere** and **root endosphere** of the selected trees were considered.</span>
 <span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sample sequencing scheme</span></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>According to DADA2 developers, when our scientific projects include 2 or more sequencing runs, they should be processed separatedly. Once the Sequence Tables are obtained, all of them have to be merged into a one merged table, and we can go on processing all the samples of the same scientific project from this unique merged table.</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>In our case, the 528 bacterial samples (+replicates of the MockCommunity) were thus separatedly processed according to the corresponding runs. Then, the 5 Sequence Table were joined into a just one table, all we followed processing that table. The same procedure was applied for fungal dataset.</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>According to DADA2 developers, when our scientific projects include 2 or more sequencing runs, they should be processed separately. Once the Sequence Tables are obtained, all of them have to be merged into a one merged table, and we can go on processing all the samples of the same scientific project from this unique merged table.</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>In our case, the 528 bacterial samples (+replicates of the MockCommunity) were thus separately processed according to the corresponding runs. Then, the 5 Sequence Table were joined into a just one table, and we followed processing that table. The same procedure was applied for fungal dataset.</span>
 <span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>Thus, all the samples of SUMHAL project were futher processed altogether, although the Data Descriptor **just** included samples corresponding to *P. sylvestris* trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-project of the SUMHAL project</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>Thus, all the samples of SUMHAL project were further processed altogether, although the Data Descriptor **just** included samples corresponding to *P. sylvestris* trees (spring 2022) located in the three selected areas. Accordingly, the BioProject PRJNA993625 (NCBI SRA) included just the fastq files corresponding to this sub-project. In a near future, a second BioProject will be created again in NCBI SRA including the fastq files corresponding to another sub-projects of the SUMHAL project</span>
 <span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="fu">## Authors</span></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ana V Lasa  &lt;a href="https://orcid.org/0000-0003-3783-7157" target="orcid.widget"&gt;</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>&lt;img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /&gt;&lt;/a&gt;</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Ana V. Lasa</span><span class="co">](https://github.com/anitalasa)</span> <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">"https://orcid.org/0000-0003-3783-7157"</span> <span class="er">target</span><span class="ot">=</span><span class="st">"orcid.widget"</span><span class="kw">&gt;</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;img</span> <span class="er">alt</span><span class="ot">=</span><span class="st">"ORCID logo"</span> <span class="er">src</span><span class="ot">=</span><span class="st">"https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"</span> <span class="er">width</span><span class="ot">=</span><span class="st">"16"</span> <span class="er">height</span><span class="ot">=</span><span class="st">"16"</span> <span class="kw">/&gt;&lt;/a&gt;</span></span>
 <span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Antonio J. Pérez-Luque</span><span class="co">](https://github.com/ajpelu)</span> &lt;a href="https://orcid.org/0000-0002-1747-0469" target="orcid.widget"&gt;</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>&lt;img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /&gt;&lt;/a&gt;</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Antonio J. Pérez-Luque</span><span class="co">](https://github.com/ajpelu)</span> <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">"https://orcid.org/0000-0002-1747-0469"</span> <span class="er">target</span><span class="ot">=</span><span class="st">"orcid.widget"</span><span class="kw">&gt;</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;img</span> <span class="er">alt</span><span class="ot">=</span><span class="st">"ORCID logo"</span> <span class="er">src</span><span class="ot">=</span><span class="st">"https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"</span> <span class="er">width</span><span class="ot">=</span><span class="st">"16"</span> <span class="er">height</span><span class="ot">=</span><span class="st">"16"</span> <span class="kw">/&gt;&lt;/a&gt;</span></span>
 <span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Antonio José Fernández-González &lt;a href="https://orcid.org/0000-0002-1938-5436" target="orcid.widget"&gt;</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>&lt;img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /&gt;&lt;/a&gt;</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Antonio José Fernández-González <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">"https://orcid.org/0000-0002-1938-5436"</span> <span class="er">target</span><span class="ot">=</span><span class="st">"orcid.widget"</span><span class="kw">&gt;</span></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;img</span> <span class="er">alt</span><span class="ot">=</span><span class="st">"ORCID logo"</span> <span class="er">src</span><span class="ot">=</span><span class="st">"https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"</span> <span class="er">width</span><span class="ot">=</span><span class="st">"16"</span> <span class="er">height</span><span class="ot">=</span><span class="st">"16"</span> <span class="kw">/&gt;&lt;/a&gt;</span></span>
 <span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pablo J. Villadas &lt;a href="https://orcid.org/0000-0001-8662-8883" target="orcid.widget"&gt;</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>&lt;img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /&gt;&lt;/a&gt;</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pablo J. Villadas <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">"https://orcid.org/0000-0001-8662-8883"</span> <span class="er">target</span><span class="ot">=</span><span class="st">"orcid.widget"</span><span class="kw">&gt;</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;img</span> <span class="er">alt</span><span class="ot">=</span><span class="st">"ORCID logo"</span> <span class="er">src</span><span class="ot">=</span><span class="st">"https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"</span> <span class="er">width</span><span class="ot">=</span><span class="st">"16"</span> <span class="er">height</span><span class="ot">=</span><span class="st">"16"</span> <span class="kw">/&gt;&lt;/a&gt;</span></span>
 <span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Jesús Mercado-Blanco &lt;a href="https://orcid.org/0000-0003-1895-5895" target="orcid.widget"&gt;</span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>&lt;img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /&gt;&lt;/a&gt;</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Jesús Mercado-Blanco <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">"https://orcid.org/0000-0003-1895-5895"</span> <span class="er">target</span><span class="ot">=</span><span class="st">"orcid.widget"</span><span class="kw">&gt;</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;img</span> <span class="er">alt</span><span class="ot">=</span><span class="st">"ORCID logo"</span> <span class="er">src</span><span class="ot">=</span><span class="st">"https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"</span> <span class="er">width</span><span class="ot">=</span><span class="st">"16"</span> <span class="er">height</span><span class="ot">=</span><span class="st">"16"</span> <span class="kw">/&gt;&lt;/a&gt;</span></span>
 <span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Manuel Fernández-López &lt;a href="https://orcid.org/0000-0003-2366-6908" target="orcid.widget"&gt;</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>&lt;img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /&gt;&lt;/a&gt;</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Manuel Fernández-López <span class="kw">&lt;a</span> <span class="er">href</span><span class="ot">=</span><span class="st">"https://orcid.org/0000-0003-2366-6908"</span> <span class="er">target</span><span class="ot">=</span><span class="st">"orcid.widget"</span><span class="kw">&gt;</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;img</span> <span class="er">alt</span><span class="ot">=</span><span class="st">"ORCID logo"</span> <span class="er">src</span><span class="ot">=</span><span class="st">"https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"</span> <span class="er">width</span><span class="ot">=</span><span class="st">"16"</span> <span class="er">height</span><span class="ot">=</span><span class="st">"16"</span> <span class="kw">/&gt;&lt;/a&gt;</span></span>
 <span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to cite: </span></span>
 <span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="fu">### Repository: </span></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Ana V. Lasa &amp; Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic *Pinus sylvestris* trees. INCLUIR DOI ZENODO https://doi.org/10.5281/zenodo.7350714</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Ana V. Lasa &amp; Antonio J. Pérez-Luque (2024) Code repository of the DataPaper: Root-associated microbiota of decline-affected and asymptomatic *Pinus sylvestris* trees.  https://doi.org/10.5281/zenodo.13711241</span>
 <span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="fu">### Main paper: </span></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. https://doi.org/10.1016/j.scitotenv.2024.171858 </span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. https://doi.org/10.1016/j.scitotenv.2024.171858</span>
 <span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="fu">### Data Paper: </span></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>Include the cite when the DataPaper is published </span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>Building, still unpublished</span>
 <span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="fu"># References </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
-
 
 
 
