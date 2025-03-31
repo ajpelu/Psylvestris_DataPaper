@@ -25,47 +25,62 @@ We considered each tree as an event. In each tree (parentID) a soil sample is ta
 
 ## Prepare data 
 ```{r}
-bac_raw <- read_delim("data/ASV_bacterias.txt")
-bac <- bac_raw |> 
+bac_rawpv <- read_delim("data/ASV_bacterias_primavera_verano.txt")
+
+bacpv <- bac_rawpv |> 
   pivot_longer(cols = 
                  c(everything(), 
-                   -any_of(c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "ASV"))),
+                   -any_of(c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "ASV_names"))),
                values_to = "n", 
-               names_to = "sample") |> 
+               names_to = "sample_names") |> 
+  mutate(sample_names_season = str_sub(sample_names, end = -2)) |> 
+  mutate(season = str_extract(sample_names, "^pr|^v")) |> 
+  mutate(season = case_when(
+    season == "pr" ~ "spring", 
+    season == "v" ~ "summer"
+  )) |> 
+  mutate(sample = str_remove(sample_names, "^pr|^v")) |> 
   mutate(tree = str_sub(sample, end = -2),
          target = str_sub(sample, start= -1)) |> 
   mutate(target = case_when(
     target == "E" ~ "Endosphere",
     target == "R" ~ "Rhizosphere")
-  )
+  ) 
 
-fungi_raw <- read_delim("data/ASV_hongos.txt")
-fungi <- fungi_raw |> 
+fungi_rawpv <- read_delim("data/ASV_hongos_primavera_verano.txt")
+
+fungipv <- fungi_rawpv |> 
   pivot_longer(cols = 
                  c(everything(), 
-                   -any_of(c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "ASV"))),
+                   -any_of(c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "ASV_names"))),
                values_to = "n", 
-               names_to = "sample") |> 
+               names_to = "sample_names") |> 
+  mutate(sample_names_season = str_sub(sample_names, end = -2)) |> 
+  mutate(season = str_extract(sample_names, "^pr|^v")) |> 
+  mutate(season = case_when(
+    season == "pr" ~ "spring", 
+    season == "v" ~ "summer"
+  )) |> 
+  mutate(sample = str_remove(sample_names, "^pr|^v")) |> 
   mutate(tree = str_sub(sample, end = -2),
          target = str_sub(sample, start= -1)) |> 
   mutate(target = case_when(
     target == "E" ~ "Endosphere",
     target == "R" ~ "Rhizosphere")
-  )
+  ) 
 
+md_event_site <- read_excel("data/metadata_trees.xlsx", sheet = "locate_sampling")
+md_event_date <- read_excel("data/metadata_trees.xlsx", sheet = "date_sampling")
 
-md_events <- read_excel("data/metadata_trees.xlsx")
 
 soil_raw <- read_delim("data/DatosFisicoquimicos_Psylvestris.txt") |> 
   clean_names() |> 
-  mutate(site = ifelse(site == "Snevada",  "S. Nevada", paste0("S. ", site))) |>
-  rename(tree = sample) |> 
-  mutate(eventID = paste0(tree, "S"))
+  mutate(site = ifelse(site == "Snevada",  "S. Nevada", paste0("S. ", site))) 
 
 soil <- soil_raw |> 
     pivot_longer(cols = 
                  c(everything(), 
-                   -any_of(c("tree","site","condition", "eventID"))),
+                   -any_of(c("site","sample", "condition"))),
                values_to = "value", 
                names_to = "variable") 
 ```
@@ -75,11 +90,12 @@ soil <- soil_raw |>
 ### parentEventID
 
 ```{r}
-proto_parent_event <- 
-  md_events |> 
+## Event Location 
+parent_event <- 
+  md_event_site |> 
   mutate(
     type = "Event",
-    eventType = "Site Visit", 
+    eventType = "Site", 
     language = "en",
     license = "https://creativecommons.org/licenses/by/4.0/legalcode.es",
     institutionCode = "CSIC-EEZ",
@@ -88,12 +104,17 @@ proto_parent_event <-
     samplingProtocol = NA,
     fieldNumber = tree,
     bibliographicCitation = "Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. doi: 10.1016/j.scitotenv.2024.171858", 
-    eventDate = as.Date(as.character(sampling_date), format = "%Y%m%d"), 
+    # eventDate = as.Date(as.character(sampling_date), format = "%Y%m%d"), 
     countryCode = "ES", 
-    parentEventID = NA) |> 
-  unite("eventID", c("tree","sampling_date"), sep = "-", remove = FALSE) |> 
+    parentEventID = NA, 
+    eventID = tree, 
+    eventDate = NA,
+    year = NA,
+    month = NA, 
+    day = NA) |> 
   relocate(
-    eventID, parentEventID, eventDate,
+    eventID, parentEventID, 
+    eventDate,
     type, eventType, language, license, 
     bibliographicCitation, institutionCode, datasetName, 
     samplingProtocol, 
@@ -105,42 +126,81 @@ proto_parent_event <-
     fieldNumber, 
     locationID = site) |> 
     dplyr::select(-verbatim_lat, -verbatim_long)
+
+season_event <- 
+  md_event_date |> 
+  inner_join(md_event_site) |> 
+  mutate(
+    type = "Event",
+    eventType = "Site Visit", 
+    language = "en",
+    license = "https://creativecommons.org/licenses/by/4.0/legalcode.es",
+    institutionCode = "CSIC-EEZ",
+    datasetName = "Root-associated microbiota of decline-affected and asymptomatic Pinus sylvestris trees", 
+    habitat = "Pinus sylvestris tree", 
+    samplingProtocol = NA,
+    fieldNumber = sample_names_season,
+    bibliographicCitation = "Lasa, A.V.; Fernández-González, A.J.; Villadas, P.J.; Mercado-Blanco, J.; Pérez-Luque, A.J.; Fernández-López, M. (2024). Mediterranean pine forest decline: a matter of root-associated microbiota and climate change. Science of The Total Environment 926: 171858. doi: 10.1016/j.scitotenv.2024.171858", 
+    eventDate = as.Date(as.character(sampling_date), format = "%Y%m%d"), 
+    countryCode = "ES", 
+    parentEventID = tree) |> 
+  unite("eventID", c("tree","sampling_date"), sep = "-", remove = FALSE) |> 
+  relocate(
+    eventID, parentEventID, 
+    eventDate,
+    type, eventType, language, license, 
+    bibliographicCitation, institutionCode, datasetName, 
+    samplingProtocol, 
+    year, month, day, 
+    continent, country, countryCode, stateProvince = province, municipality, locality = location,
+    decimalLatitude = lat, decimalLongitude = long, verbatimCoordinates = verbatim_coordinates,
+    verbatimElevation = Elevation, habitat, 
+    eventRemarks = health_status,
+    fieldNumber, 
+    locationID = site) |> 
+    dplyr::select(-verbatim_lat, -verbatim_long, -sampling_date)
 ```
 
 
 ### soilEvent
 ```{r}
-soil_event <- proto_parent_event |> 
+soil_event <- season_event |> 
   dplyr::select(-parentEventID, -eventType, -samplingProtocol, -habitat) |> 
   rename(parentEventID = eventID) |> 
+  filter(fieldNumber %in% unique(soil_raw$sample)) |> 
   mutate(protoID = paste0(tree, "S"),
          eventType = "Sampling",
          samplingProtocol = "Soil samples (500 g) to determine physicochemical parameters",
-         habitat = "Soil close to the roots of each target tree (Pinus sylvestris)") |> 
-  unite("eventID", c("protoID","sampling_date"), sep = "-", remove = TRUE)
+         habitat = "Soil close to the roots of each target tree (Pinus sylvestris)",
+         sample_date = str_replace_all(eventDate, "-", "")) |> 
+  unite("eventID", c("protoID", "sample_date"), remove = TRUE) |> 
+  dplyr::select(-season)
 ```
 
 
 ### Rhizosphere and Endosphere Events 
 
 ```{r}
-micro_event <- proto_parent_event |> 
-  inner_join((fungi |> dplyr::select(sample, tree) |> unique())) |> 
+micro_event <- season_event |> 
+  inner_join((fungipv |> dplyr::select(sample_names_season, tree, sample_names) |> unique())) |> 
   dplyr::select(-parentEventID, -eventType, -samplingProtocol, -habitat) |> 
   rename(parentEventID = eventID) |> 
-  unite("eventID", c("sample","sampling_date"), sep = "-", remove = FALSE) |>
-  mutate(target = str_sub(sample, start= -1)) |> 
+  mutate(sample_names = str_remove_all(sample_names, "^pr|^v"),
+         sampling_date = str_replace_all(eventDate, "-", "")) |>
+  unite("eventID", c("sample_names","sampling_date"), sep = "-", remove = FALSE) |> 
+  mutate(target = str_sub(sample_names, start= -1)) |> 
   mutate(
     eventType = "Sampling",
     samplingProtocol = case_when(
-      target == "E" ~ "DNA extraction from the root endosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi",
-      target == "R" ~ "DNA extraction from the rhizosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi"
+      target == "E" ~ "DNA extraction from the root endosphere of Pinus sylvestris trees and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi",
+      target == "R" ~ "DNA extraction from the rhizosphere of Pinus sylvestris trees and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi"
     ),
     habitat = case_when(
       target == "E" ~ "Root endosphere of Pinus sylvestris",
       target == "R" ~ "Rhizosphere of Pinus sylvestris"
     )) |> 
-  dplyr::select(-sample, -target, -sampling_date)
+  dplyr::select(-target, -sampling_date) |> 
+  unite("sample_names", c("season", "sample_names"), sep="")
 ```
 
 
@@ -148,22 +208,24 @@ micro_event <- proto_parent_event |>
 #| eval: false
 #| echo: false
 # check names consistency 
-setdiff(names(proto_parent_event), names(soil_event))
-setdiff(names(soil_event), names(proto_parent_event))
+# check names consistency 
+setdiff(names(micro_event), names(soil_event)) 
+setdiff(names(soil_event), names(micro_event))
 
-setdiff(names(proto_parent_event), names(micro_event))
-setdiff(names(micro_event), names(proto_parent_event))
+setdiff(names(parent_event), names(micro_event))
+setdiff(names(micro_event), names(parent_event)) # "sample_names_season" "sample_names"   
 
 setdiff(names(soil_event), names(micro_event))
-setdiff(names(micro_event), names(soil_event))
+setdiff(names(micro_event), names(soil_event)) # sample_names
 ```
 
 ### Combined events 
 ```{r}
-events <- proto_parent_event |>
-  dplyr::select(-sampling_date) |> 
-  bind_rows(micro_event,soil_event) |> 
-  dplyr::select(-tree) 
+events <- parent_event |>
+  bind_rows(micro_event, soil_event) |> 
+  dplyr::select(-sample_names_season, -sample_names) |> 
+  dplyr::select(-tree) |> 
+  mutate(across(c(year, month, day, eventDate), ~ ifelse(is.na(.), "", .)))
 ```
 
 ```{r}
@@ -192,8 +254,11 @@ aux <- soil_event |>
   dplyr::select(eventID) |> 
   separate(eventID, into = c("idsoil", "sampling_date"), remove = FALSE)
 
+
+
 mof <- soil |> 
-  dplyr::select(idsoil = eventID, variable, value) |> 
+  mutate(idsoil = paste0(str_remove_all(sample, "^pr|^v"), "S")) |> 
+  dplyr::select(idsoil, variable, value) |> 
   inner_join(dicc_variables_fq) |> 
   inner_join(aux) |> 
   unite("measurementID", c("eventID", "id_var"), sep = "-", remove = FALSE) |> 
@@ -213,6 +278,7 @@ mof <- soil |>
     measurementMethod, 
     measurementRemarks) |> 
   dplyr::select(-idsoil, -id_var, -sampling_date, -variable)
+
 
 ```
 
@@ -242,18 +308,20 @@ write_csv(mof, "output/dwc_db/mof.csv")
 
 ### Bacteria
 ```{r}
-df_idevents <- events |> 
+df_idevents <- parent_event |>
+  bind_rows(micro_event, soil_event) |> 
+  dplyr::select(-sample_names_season, -tree) |> 
   filter(samplingProtocol != "Soil samples (500 g) to determine physicochemical parameters") |> 
   filter(!is.na(parentEventID)) |> 
-  dplyr::select(eventID, habitat, license, institutionCode, language, datasetName, 
+    dplyr::select(eventID, habitat, license, institutionCode, language, datasetName, 
                 continent, country, countryCode, stateProvince, municipality, locality,
-                decimalLatitude, decimalLongitude) |> 
+                decimalLatitude, decimalLongitude, fieldNumber, sample_names) |> 
   separate(eventID, into = c("sample", "sampling_date"), remove = FALSE)
-
-occ_bac <- bac |> 
+  
+occ_bac <- bacpv |> 
  filter(n > 0) |> 
   inner_join(df_idevents) |> 
-  unite("occurrenceID", c("eventID","ASV"), sep = "-", remove = FALSE) |> 
+  unite("occurrenceID", c("eventID","ASV_names"), sep = "-", remove = FALSE) |> 
   mutate(
     basisOfRecord = "MaterialSample",
     collectionCode = "MAE_PSylvestris",
@@ -265,10 +333,10 @@ occ_bac <- bac |>
       n > 0 ~ "present"),
     preparations = "DNA extract",
     nameAccordingToID = "Ribosomal Database Project RDP-II training set v.18", 
-    verbatimIdentification = ASV
+    verbatimIdentification = ASV_names
   ) |> 
   rename(
-    taxonID = ASV,
+    taxonID = ASV_names,
     individualCount = n) |> 
   mutate(across(c(Kingdom, Phylum, Class, Order, Family, Genus), ~replace(., . == "unclassified", NA))) |> 
   relocate(
@@ -278,18 +346,16 @@ occ_bac <- bac |>
     kingdom = Kingdom, phylum = Phylum, class = Class, order = Order, family = Family, genus = Genus,
     verbatimIdentification, 
     continent, country, countryCode, stateProvince, municipality, locality,
-    decimalLatitude, decimalLongitude, habitat,
-    fieldNumber = sample) |> 
-  dplyr::select(-tree, -target, -sampling_date)
-
+    decimalLatitude, decimalLongitude, habitat) |> 
+  dplyr::select(-tree, -target, -sampling_date, -sample, -sample_names_season, -season, -sample_names)
 ```
 
 ### Fungi 
 ```{r}
-occ_fungi <- fungi |> 
+occ_fungi <- fungipv |> 
  filter(n > 0) |> 
   inner_join(df_idevents) |> 
-  unite("occurrenceID", c("eventID","ASV"), sep = "-", remove = FALSE) |> 
+  unite("occurrenceID", c("eventID","ASV_names"), sep = "-", remove = FALSE) |> 
   mutate(
     basisOfRecord = "MaterialSample",
     collectionCode = "MAE_PSylvestris",
@@ -301,10 +367,10 @@ occ_fungi <- fungi |>
       n > 0 ~ "present"),
     preparations = "DNA extract",
     nameAccordingToID = "Ribosomal Database Project RDP-II training set v.18", 
-    verbatimIdentification = ASV
+    verbatimIdentification = ASV_names
   ) |> 
   rename(
-    taxonID = ASV,
+    taxonID = ASV_names,
     individualCount = n) |> 
   mutate(across(c(Kingdom, Phylum, Class, Order, Family, Genus), ~replace(., . == "unclassified", NA))) |> 
   relocate(
@@ -314,9 +380,8 @@ occ_fungi <- fungi |>
     kingdom = Kingdom, phylum = Phylum, class = Class, order = Order, family = Family, genus = Genus,
     verbatimIdentification, 
     continent, country, countryCode, stateProvince, municipality, locality,
-    decimalLatitude, decimalLongitude, habitat,
-    fieldNumber = sample) |> 
-  dplyr::select(-tree, -target, -sampling_date)
+    decimalLatitude, decimalLongitude, habitat) |> 
+  dplyr::select(-tree, -target, -sampling_date, -sample, -sample_names_season, -season, -sample_names)
 
 ```
 
